@@ -162,7 +162,39 @@ Writes chunk to the underlying stream as a netstring.
 
 =head1 SEE ALSO
 
-L<Mojo::IOLoop>, L<Mojo::IOLoop::Stream>, L<http://mojolicious.org>,
-L<https://cr.yp.to/proto/netstrings.txt>.
+=over
+
+=item *
+
+L<Mojo::IOLoop>, L<Mojo::IOLoop::Stream>, L<http://mojolicious.org>: the L<Mojolicious> Web framework
+
+=item *
+
+L<https://cr.yp.to/proto/netstrings.txt>: netstrings specification.
+
+=back
+
+=head1 ACKNOWLEDGEMENT
+
+This software has been developed with support from L<STRATO|https://www.strato.com/>.
+In German: Diese Software wurde mit Unterstützung von L<STRATO|https://www.strato.de/> entwickelt.
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Wieger Opmeer <wiegerop@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2016 by Wieger Opmeer.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
+
