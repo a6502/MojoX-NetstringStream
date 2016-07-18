@@ -1,0 +1,4 @@
+/MojoX-NetstringStream-*.tar.gz
+/MojoX-NetstringStream-*/
+/.build/
+*~
