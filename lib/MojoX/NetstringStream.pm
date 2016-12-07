@@ -1,5 +1,3 @@
-use strict;
-use warnings;
 package MojoX::NetstringStream;
 
 use Mojo::Base 'Mojo::EventEmitter';
@@ -7,7 +5,9 @@ use Mojo::Base 'Mojo::EventEmitter';
 use Carp;
 use Encode;
 
-has [qw(buf want stream)];
+our $VERSION  = '0.03';
+
+has [qw(_buf debug stream _want)];
 
 sub new {
 	my ($class, %args) = @_;
@@ -19,6 +19,7 @@ sub new {
 	$self->{buf} = \$buf; # buffer for incomple chunks
 	$self->{want} = \$want; # if set: number of bytes expected
 	$self->{stream} = $stream;
+	$self->{debug} = $args{debug} // 0;
 	$stream->timeout(0);
 	$stream->on(read => sub{ $self->_on_read(@_); });
 	$stream->on(close => sub{ $self->_on_close(@_); });
@@ -31,7 +32,7 @@ sub _on_read {
 	my $want = $self->{want};
 
 	$$buf .= $bytes;
-	#say "on_read: bytes: $bytes buf now: $$buf";
+	say "on_read: bytes: $bytes buf now: $$buf" if $self->debug;
 	
 	while (1) { # fixme: does this always end? 
 		if (!$$want) {
@@ -58,7 +59,7 @@ sub _on_read {
 sub _on_close {
 	my ($self, $stream) = @_;
 	$self->emit(close => $stream);
-	#say 'got close!';
+	say 'got close!' if $self->debug;
 	delete $self->{stream};
 }
 
@@ -71,7 +72,7 @@ sub write {
 	my ($self, $chunk) = @_;
 	my $len = length(Encode::encode_utf8($chunk));
 	my $out = sprintf('%u:%s,', $len, $chunk);
-	#say "write: $out";
+	say "write: $out" if $self->debug;
 	$self->stream->write($out);
 }
 
@@ -86,7 +87,7 @@ MojoX::NetstringStream - Turn a (tcp) stream into a NetstringStream
 
 =head1 SYNOPSIS
 
-  use MojoX::NetstringStream;;
+  use MojoX::NetstringStream;
 
   my $clientid = Mojo::IOLoop->client({
     port => $port,
@@ -142,6 +143,12 @@ L<MojoX::NetstringStream> implements the following attributes.
 
 The underlying L<Mojo::IOLoop::Stream>-like stream
 
+=head2 debug
+
+  $ls->debug = 1;
+
+Enables or disables debugging output.
+
 =head1 METHODS
 
 L<MojoX::NetstringStream> inherits all methods from
@@ -149,10 +156,14 @@ L<Mojo::EventEmitter> and implements the following new ones.
 
 =head2 new
 
-  my $ns = MojoX::NetstringStream->new(stream => $stream);
+  my $ns = MojoX::NetstringStream->new(
+      stream => $stream,
+      debug => $debug,
+  );
 
-Construct a new L<MojoX::NetstringStream> object.  The stream argument
-must behave like a L<Mojo::IOLoop::Stream> object.
+Construct a new L<MojoX::NetstringStream> object.  The stream argument must
+behave like a L<Mojo::IOLoop::Stream> object.  The debug argument is
+optional and just sets the debug attribute.
 
 =head2 write
 
