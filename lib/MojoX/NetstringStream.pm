@@ -5,7 +5,7 @@ use Mojo::Base 'Mojo::EventEmitter';
 use Carp;
 use Encode;
 
-our $VERSION  = '0.03';
+our $VERSION  = '0.04';
 
 has [qw(_buf debug stream _want)];
 
@@ -69,8 +69,9 @@ sub close {
 }
 
 sub write {
+	use bytes;
 	my ($self, $chunk) = @_;
-	my $len = length(Encode::encode_utf8($chunk));
+	my $len = length($chunk);
 	my $out = sprintf('%u:%s,', $len, $chunk);
 	say "write: $out" if $self->debug;
 	$self->stream->write($out);
