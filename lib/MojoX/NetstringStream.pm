@@ -4,7 +4,7 @@ use Mojo::Base 'Mojo::EventEmitter';
 
 use Carp;
 
-our $VERSION  = '0.05';
+our $VERSION  = '0.06';
 
 has [qw(buf debug stream want)];
 
@@ -51,7 +51,7 @@ sub _on_read {
 			#substr($$buf, 0, length($1)+1, ''); # 123:
 			substr($$buf, 0, $i+1, '');
 			$$want++; # include trailing ,
-			say "on_read: want: $$want buf now: $$buf";
+			#say "on_read: want: $$want buf now: $$buf";
 		}
 
 		return if $$want > length($$buf);
@@ -62,7 +62,7 @@ sub _on_read {
 			return;
 		}
 		$$want = 0;
-		say "on_read: chunk: $chunk buf now: $$buf";
+		#say "on_read: chunk: $chunk buf now: $$buf";
 
 		$self->emit(chunk => $chunk);
 	}
