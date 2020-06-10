@@ -3,6 +3,7 @@ package MojoX::NetstringStream;
 use Mojo::Base 'Mojo::EventEmitter';
 
 use Carp;
+use Scalar::Util qw(weaken);
 
 our $VERSION  = '0.06';
 
@@ -21,8 +22,11 @@ sub new {
 	$self->{debug} = $args{debug} // 0;
 	$self->{maxsize} = $args{maxsize};
 	$stream->timeout(0);
-	$stream->on(read => sub{ $self->_on_read(@_); });
-	$stream->on(close => sub{ $self->_on_close(@_); });
+	{
+		weaken (my $self = $self);
+		$stream->on(read => sub{ $self->_on_read(@_); });
+		$stream->on(close => sub{ $self->_on_close(@_); });
+	}
 	return $self;
 }
 
